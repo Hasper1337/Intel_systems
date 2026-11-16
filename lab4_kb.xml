@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  База знаний экспертной системы «Выбор языка программирования».
+  Продукционная модель: каждое правило имеет вид
+      (id); scope; ЕСЛИ <if> И <if> ... ТО <then>
+  <then fact=... value=...>  – правило выводит новый факт (промежуточный вывод);
+  <then advice=...>          – правило выдаёт совет (итог консультации).
+  Файл можно редактировать: добавлять вопросы, ответы и правила.
+-->
+<knowledge_base title="Выбор языка программирования">
+
+  <questions>
+    <question id="goal" text="Что вы хотите разрабатывать?">
+      <answer id="web">Сайты и веб-сервисы</answer>
+      <answer id="mobile">Мобильные приложения</answer>
+      <answer id="games">Игры</answer>
+      <answer id="data">Анализ данных и машинное обучение</answer>
+      <answer id="system">Системное ПО и «железо»</answer>
+      <answer id="desktop">Программы для компьютера (настольные)</answer>
+      <answer id="auto">Скрипты и автоматизацию рутины</answer>
+    </question>
+    <question id="web_side" text="Какая часть веб-приложения вам интереснее?">
+      <answer id="front">Интерфейс, который видит пользователь в браузере</answer>
+      <answer id="back">Серверная часть: логика, базы данных, API</answer>
+    </question>
+    <question id="back_pri" text="Что важнее всего для серверной части?">
+      <answer id="fast">Быстро сделать работающий прототип</answer>
+      <answer id="load">Выдерживать высокую нагрузку</answer>
+      <answer id="corp">Крупный корпоративный проект с большой командой</answer>
+      <answer id="cms">Обычный сайт на готовой CMS и дешёвом хостинге</answer>
+    </question>
+    <question id="mob_os" text="Для какой платформы нужно мобильное приложение?">
+      <answer id="android">Только Android</answer>
+      <answer id="ios">Только iPhone / iPad</answer>
+      <answer id="both">Сразу обе платформы из одного кода</answer>
+    </question>
+    <question id="game_kind" text="Какие игры вы хотите делать?">
+      <answer id="indie">Небольшие 2D/3D-игры (инди)</answer>
+      <answer id="aaa">Большие 3D-игры с максимальной графикой</answer>
+      <answer id="browser">Игры, работающие прямо в браузере</answer>
+    </question>
+    <question id="data_task" text="Какая задача с данными основная?">
+      <answer id="ml">Машинное обучение и нейронные сети</answer>
+      <answer id="stat">Статистика и научные исследования</answer>
+      <answer id="db">Выборки и отчёты из баз данных</answer>
+    </question>
+    <question id="sys_kind" text="С чем именно предстоит работать?">
+      <answer id="mcu">Микроконтроллеры и встраиваемые устройства</answer>
+      <answer id="os">Операционные системы, драйверы, высокопроизводительные программы</answer>
+    </question>
+    <question id="sys_pri" text="Что для вас важнее?">
+      <answer id="safe">Защита от ошибок работы с памятью</answer>
+      <answer id="libs">Огромное количество готовых библиотек и кода</answer>
+    </question>
+    <question id="desk_os" text="Под какую операционную систему нужна программа?">
+      <answer id="win">Только Windows</answer>
+      <answer id="mac">Только macOS</answer>
+      <answer id="cross">Windows, Linux и macOS одновременно</answer>
+    </question>
+    <question id="auto_env" text="Где будут выполняться скрипты?">
+      <answer id="win">Администрирование Windows</answer>
+      <answer id="linux">Серверы и терминал Linux</answer>
+      <answer id="any">Где угодно: файлы, таблицы, сайты, боты</answer>
+    </question>
+    <question id="level" text="Какой у вас опыт программирования?">
+      <answer id="beginner">Только начинаю</answer>
+      <answer id="experienced">Уже уверенно пишу на каком-либо языке</answer>
+    </question>
+  </questions>
+
+  <rules>
+    <!-- ================= Веб ================= -->
+    <rule id="WEB_1" scope="Веб-разработка">
+      <if fact="goal" value="web"/>
+      <if fact="web_side" value="front"/>
+      <then fact="area" value="frontend">код выполняется в браузере</then>
+    </rule>
+    <rule id="WEB_2" scope="Веб-разработка">
+      <if fact="goal" value="web"/>
+      <if fact="web_side" value="back"/>
+      <if fact="back_pri" value="fast"/>
+      <then fact="simple" value="yes">нужен простой универсальный язык</then>
+    </rule>
+    <rule id="WEB_3" scope="Веб-разработка">
+      <if fact="goal" value="web"/>
+      <if fact="web_side" value="back"/>
+      <if fact="back_pri" value="load"/>
+      <then advice="Go">Компилируемый язык с простой моделью параллельности (горутины). Хорошо подходит для высоконагруженных сервисов и микросервисов.</then>
+    </rule>
+    <rule id="WEB_4" scope="Веб-разработка">
+      <if fact="goal" value="web"/>
+      <if fact="web_side" value="back"/>
+      <if fact="back_pri" value="corp"/>
+      <then fact="platform" value="jvm">нужна зрелая корпоративная платформа</then>
+    </rule>
+    <rule id="WEB_5" scope="Веб-разработка">
+      <if fact="goal" value="web"/>
+      <if fact="web_side" value="back"/>
+      <if fact="back_pri" value="cms"/>
+      <then advice="PHP">На PHP написаны WordPress, 1С-Битрикс и большинство CMS. Работает на любом недорогом хостинге, низкий порог входа.</then>
+    </rule>
+
+    <!-- ================= Мобильные ================= -->
+    <rule id="MOB_1" scope="Мобильная разработка">
+      <if fact="goal" value="mobile"/>
+      <if fact="mob_os" value="android"/>
+      <then advice="Kotlin">Официальный язык разработки под Android. Современный синтаксис, полная совместимость с Java-библиотеками.</then>
+    </rule>
+    <rule id="MOB_2" scope="Мобильная разработка">
+      <if fact="goal" value="mobile"/>
+      <if fact="mob_os" value="ios"/>
+      <then fact="eco" value="apple">целевая платформа – устройства Apple</then>
+    </rule>
+    <rule id="MOB_3" scope="Мобильная разработка">
+      <if fact="goal" value="mobile"/>
+      <if fact="mob_os" value="both"/>
+      <then advice="Dart и Flutter">Фреймворк Flutter позволяет из одного кода на Dart собрать приложение и для Android, и для iOS.</then>
+    </rule>
+
+    <!-- ================= Игры ================= -->
+    <rule id="GAME_1" scope="Разработка игр">
+      <if fact="goal" value="games"/>
+      <if fact="game_kind" value="indie"/>
+      <then advice="C# и Unity">Движок Unity – стандарт для инди-игр. Сценарии пишутся на C#, много уроков и готовых ассетов.</then>
+    </rule>
+    <rule id="GAME_2" scope="Разработка игр">
+      <if fact="goal" value="games"/>
+      <if fact="game_kind" value="aaa"/>
+      <then advice="C++ и Unreal Engine">Unreal Engine даёт максимальное качество графики, а C++ – полный контроль над производительностью.</then>
+    </rule>
+    <rule id="GAME_3" scope="Разработка игр">
+      <if fact="goal" value="games"/>
+      <if fact="game_kind" value="browser"/>
+      <then fact="area" value="frontend">код выполняется в браузере</then>
+    </rule>
+
+    <!-- ================= Данные ================= -->
+    <rule id="DATA_1" scope="Анализ данных">
+      <if fact="goal" value="data"/>
+      <if fact="data_task" value="ml"/>
+      <then fact="simple" value="yes">нужен простой универсальный язык</then>
+    </rule>
+    <rule id="DATA_2" scope="Анализ данных">
+      <if fact="goal" value="data"/>
+      <if fact="data_task" value="stat"/>
+      <then advice="R">Язык, созданный статистиками для статистики: тысячи пакетов для анализа и построения графиков.</then>
+    </rule>
+    <rule id="DATA_3" scope="Анализ данных">
+      <if fact="goal" value="data"/>
+      <if fact="data_task" value="db"/>
+      <then advice="SQL">Язык запросов к реляционным базам данных. Без него не обходится ни один аналитик.</then>
+    </rule>
+
+    <!-- ================= Системное ПО ================= -->
+    <rule id="SYS_1" scope="Системное программирование">
+      <if fact="goal" value="system"/>
+      <if fact="sys_kind" value="mcu"/>
+      <then advice="C">Основной язык микроконтроллеров: минимальные требования к памяти и прямой доступ к «железу».</then>
+    </rule>
+    <rule id="SYS_2" scope="Системное программирование">
+      <if fact="goal" value="system"/>
+      <if fact="sys_kind" value="os"/>
+      <if fact="sys_pri" value="safe"/>
+      <then advice="Rust">Скорость уровня C++, но компилятор не даёт допустить ошибки работы с памятью и гонки данных.</then>
+    </rule>
+    <rule id="SYS_3" scope="Системное программирование">
+      <if fact="goal" value="system"/>
+      <if fact="sys_kind" value="os"/>
+      <if fact="sys_pri" value="libs"/>
+      <then advice="C++">Самый распространённый язык для высокопроизводительного ПО: огромная база библиотек и существующего кода.</then>
+    </rule>
+
+    <!-- ================= Настольные программы ================= -->
+    <rule id="DESK_1" scope="Настольные приложения">
+      <if fact="goal" value="desktop"/>
+      <if fact="desk_os" value="win"/>
+      <then advice="C# и .NET">Родная платформа Windows: WinForms и WPF, удобная среда Visual Studio.</then>
+    </rule>
+    <rule id="DESK_2" scope="Настольные приложения">
+      <if fact="goal" value="desktop"/>
+      <if fact="desk_os" value="mac"/>
+      <then fact="eco" value="apple">целевая платформа – устройства Apple</then>
+    </rule>
+    <rule id="DESK_3" scope="Настольные приложения">
+      <if fact="goal" value="desktop"/>
+      <if fact="desk_os" value="cross"/>
+      <if fact="level" value="beginner"/>
+      <then fact="simple" value="yes">нужен простой универсальный язык</then>
+    </rule>
+    <rule id="DESK_4" scope="Настольные приложения">
+      <if fact="goal" value="desktop"/>
+      <if fact="desk_os" value="cross"/>
+      <if fact="level" value="experienced"/>
+      <then fact="platform" value="jvm">нужна зрелая кроссплатформенная платформа</then>
+    </rule>
+
+    <!-- ================= Автоматизация ================= -->
+    <rule id="AUTO_1" scope="Автоматизация">
+      <if fact="goal" value="auto"/>
+      <if fact="auto_env" value="win"/>
+      <then advice="PowerShell">Встроенная оболочка Windows: управление службами, пользователями, реестром и Active Directory.</then>
+    </rule>
+    <rule id="AUTO_2" scope="Автоматизация">
+      <if fact="goal" value="auto"/>
+      <if fact="auto_env" value="linux"/>
+      <then advice="Bash">Командная оболочка, которая есть на любом Linux-сервере: связывает системные утилиты в сценарии.</then>
+    </rule>
+    <rule id="AUTO_3" scope="Автоматизация">
+      <if fact="goal" value="auto"/>
+      <if fact="auto_env" value="any"/>
+      <then fact="simple" value="yes">нужен простой универсальный язык</then>
+    </rule>
+
+    <!-- ========== Общие правила (работают с выведенными фактами) ========== -->
+    <rule id="COMMON_1" scope="Общие правила">
+      <if fact="area" value="frontend"/>
+      <if fact="level" value="beginner"/>
+      <then advice="JavaScript">Единственный язык, который понимают все браузеры. Результат виден сразу, ничего не нужно устанавливать.</then>
+    </rule>
+    <rule id="COMMON_2" scope="Общие правила">
+      <if fact="area" value="frontend"/>
+      <if fact="level" value="experienced"/>
+      <then advice="TypeScript">JavaScript со статической типизацией: ошибки ловятся до запуска, удобнее вести большие проекты.</then>
+    </rule>
+    <rule id="COMMON_3" scope="Общие правила">
+      <if fact="eco" value="apple"/>
+      <then advice="Swift">Основной язык Apple для iOS и macOS: быстрый, безопасный, полностью поддерживается в Xcode.</then>
+    </rule>
+    <rule id="COMMON_4" scope="Общие правила">
+      <if fact="simple" value="yes"/>
+      <then advice="Python">Простой синтаксис и библиотеки на все случаи: Django и FastAPI, NumPy и PyTorch, PyQt, работа с файлами и сетью.</then>
+    </rule>
+    <rule id="COMMON_5" scope="Общие правила">
+      <if fact="platform" value="jvm"/>
+      <then advice="Java">Зрелая платформа JVM: работает на любой ОС, богатая экосистема (Spring, JavaFX), много специалистов.</then>
+    </rule>
+  </rules>
+</knowledge_base>
